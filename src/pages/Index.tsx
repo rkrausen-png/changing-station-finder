@@ -1,16 +1,42 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import WelcomeHeader from "@/components/WelcomeHeader";
+import BottomNav from "@/components/BottomNav";
+import MapView from "@/components/MapView";
+import ListView from "@/components/ListView";
+import FavoritesView from "@/components/FavoritesView";
+import AdvertiseView from "@/components/AdvertiseView";
+import StationDetail from "@/components/StationDetail";
+import { SAMPLE_STATIONS, type ChangingStation } from "@/data/stations";
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
+const Index = () => {
+  const [activeTab, setActiveTab] = useState("map");
+  const [selectedStation, setSelectedStation] = useState<ChangingStation | null>(null);
+
+  const handleStationSelect = (station: ChangingStation) => {
+    setSelectedStation(station);
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
+    <div className="min-h-screen bg-background flex flex-col max-w-lg mx-auto relative">
+      <WelcomeHeader />
+
+      <div className="flex-1 relative">
+        {activeTab === "map" && (
+          <div className="absolute inset-0 pb-20">
+            <MapView stations={SAMPLE_STATIONS} onStationSelect={handleStationSelect} />
+          </div>
+        )}
+        {activeTab === "list" && (
+          <ListView stations={SAMPLE_STATIONS} onStationSelect={handleStationSelect} />
+        )}
+        {activeTab === "favorites" && <FavoritesView />}
+        {activeTab === "advertise" && <AdvertiseView />}
+      </div>
+
+      <StationDetail station={selectedStation} onClose={() => setSelectedStation(null)} />
+      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
     </div>
   );
 };
-
-const Index = PlaceholderIndex;
 
 export default Index;
