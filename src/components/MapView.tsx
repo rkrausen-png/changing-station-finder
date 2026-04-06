@@ -16,13 +16,13 @@ const customIcon = new Icon({
 });
 
 const MapView = ({ stations, onStationSelect }: MapViewProps) => {
-  const center: [number, number] = [40.7580, -73.9855];
+  const center: [number, number] = [39.8283, -98.5795];
 
   return (
     <div className="w-full h-full rounded-2xl overflow-hidden shadow-card">
       <MapContainer
         center={center}
-        zoom={14}
+        zoom={4}
         style={{ height: "100%", width: "100%" }}
         zoomControl={false}
       >
