@@ -1,6 +1,8 @@
-import { Star, Clock, MapPin, X, Sparkles, Navigation } from "lucide-react";
+import { Star, Clock, MapPin, X, Sparkles, Navigation, Share2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { ChangingStation } from "@/data/stations";
+import { openDirections } from "@/lib/maps";
+import { toast } from "sonner";
 
 interface StationDetailProps {
   station: ChangingStation | null;
@@ -8,6 +10,26 @@ interface StationDetailProps {
 }
 
 const StationDetail = ({ station, onClose }: StationDetailProps) => {
+  const handleGetDirections = () => {
+    if (!station) return;
+    openDirections(station.lat, station.lng, station.name);
+  };
+
+  const handleShare = async () => {
+    if (!station) return;
+    const text = `Check out this changing station at ${station.name} - ${station.address}`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: station.name, text, url: window.location.href });
+      } catch {
+        // user cancelled
+      }
+    } else {
+      await navigator.clipboard.writeText(text);
+      toast.success("Copied to clipboard!");
+    }
+  };
+
   return (
     <AnimatePresence>
       {station && (
@@ -21,7 +43,10 @@ const StationDetail = ({ station, onClose }: StationDetailProps) => {
           <div className="p-5">
             <div className="flex items-center justify-between mb-4">
               <div className="w-10 h-1 bg-border rounded-full mx-auto absolute left-1/2 -translate-x-1/2 top-3" />
-              <button onClick={onClose} className="ml-auto p-1 rounded-full bg-muted">
+              <button onClick={handleShare} className="p-1 rounded-full bg-muted">
+                <Share2 size={16} className="text-muted-foreground" />
+              </button>
+              <button onClick={onClose} className="p-1 rounded-full bg-muted">
                 <X size={18} className="text-muted-foreground" />
               </button>
             </div>
@@ -76,10 +101,21 @@ const StationDetail = ({ station, onClose }: StationDetailProps) => {
               </div>
             </div>
 
-            <button className="w-full gradient-warm text-primary-foreground font-display font-semibold py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-soft">
-              <Navigation size={18} />
-              Get Directions
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={handleGetDirections}
+                className="flex-1 gradient-warm text-primary-foreground font-display font-semibold py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-soft"
+              >
+                <Navigation size={18} />
+                Get Directions
+              </button>
+              <button
+                onClick={handleShare}
+                className="px-4 bg-muted text-foreground font-display font-semibold py-3.5 rounded-2xl flex items-center justify-center"
+              >
+                <Share2 size={18} />
+              </button>
+            </div>
           </div>
         </motion.div>
       )}
