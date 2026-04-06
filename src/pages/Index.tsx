@@ -1,16 +1,41 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import WelcomeHeader from "@/components/WelcomeHeader";
 import BottomNav from "@/components/BottomNav";
 import MapView from "@/components/MapView";
 import ListView from "@/components/ListView";
 import FavoritesView from "@/components/FavoritesView";
 import AdvertiseView from "@/components/AdvertiseView";
+import SubmitStationView from "@/components/SubmitStationView";
 import StationDetail from "@/components/StationDetail";
 import { SAMPLE_STATIONS, type ChangingStation } from "@/data/stations";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("map");
   const [selectedStation, setSelectedStation] = useState<ChangingStation | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+
+  const filteredStations = useMemo(() => {
+    let results = SAMPLE_STATIONS;
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      results = results.filter(
+        (s) =>
+          s.name.toLowerCase().includes(q) ||
+          s.storeName.toLowerCase().includes(q) ||
+          s.address.toLowerCase().includes(q)
+      );
+    }
+
+    if (selectedFilters.length > 0) {
+      results = results.filter((s) =>
+        selectedFilters.every((f) => s.amenities.includes(f))
+      );
+    }
+
+    return results;
+  }, [searchQuery, selectedFilters]);
 
   const handleStationSelect = (station: ChangingStation) => {
     setSelectedStation(station);
@@ -18,17 +43,23 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col max-w-lg mx-auto relative">
-      <WelcomeHeader />
+      <WelcomeHeader
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        selectedFilters={selectedFilters}
+        onFiltersChange={setSelectedFilters}
+      />
 
       <div className="flex-1 relative">
         {activeTab === "map" && (
           <div className="absolute inset-0 pb-20">
-            <MapView stations={SAMPLE_STATIONS} onStationSelect={handleStationSelect} />
+            <MapView stations={filteredStations} onStationSelect={handleStationSelect} />
           </div>
         )}
         {activeTab === "list" && (
-          <ListView stations={SAMPLE_STATIONS} onStationSelect={handleStationSelect} />
+          <ListView stations={filteredStations} onStationSelect={handleStationSelect} />
         )}
+        {activeTab === "add" && <SubmitStationView />}
         {activeTab === "favorites" && <FavoritesView />}
         {activeTab === "advertise" && <AdvertiseView />}
       </div>
