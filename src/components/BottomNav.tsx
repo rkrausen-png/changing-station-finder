@@ -1,5 +1,6 @@
-import { Map, List, Heart, Megaphone, PlusCircle } from "lucide-react";
+import { Map, List, Heart, MessageCircle, PlusCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 interface BottomNavProps {
   activeTab: string;
@@ -11,10 +12,20 @@ const tabs = [
   { id: "list", icon: List, label: "Nearby" },
   { id: "add", icon: PlusCircle, label: "Add" },
   { id: "favorites", icon: Heart, label: "Saved" },
-  { id: "advertise", icon: Megaphone, label: "Advertise" },
+  { id: "community", icon: MessageCircle, label: "Community" },
 ];
 
 const BottomNav = ({ activeTab, onTabChange }: BottomNavProps) => {
+  const navigate = useNavigate();
+
+  const handleTabChange = (tabId: string) => {
+    if (tabId === "community") {
+      navigate("/community");
+      return;
+    }
+    onTabChange(tabId);
+  };
+
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-card border-t border-border safe-bottom z-50">
       <div className="flex items-center justify-around py-2 px-2 max-w-lg mx-auto">
@@ -24,7 +35,7 @@ const BottomNav = ({ activeTab, onTabChange }: BottomNavProps) => {
           return (
             <button
               key={tab.id}
-              onClick={() => onTabChange(tab.id)}
+              onClick={() => handleTabChange(tab.id)}
               className={`relative flex flex-col items-center gap-0.5 py-1 px-2 ${
                 isAddButton ? "-mt-4" : ""
               }`}
