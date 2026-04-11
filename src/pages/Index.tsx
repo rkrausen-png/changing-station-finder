@@ -7,6 +7,8 @@ import FavoritesView from "@/components/FavoritesView";
 import AdvertiseView from "@/components/AdvertiseView";
 import SubmitStationView from "@/components/SubmitStationView";
 import StationDetail from "@/components/StationDetail";
+import AdBanner from "@/components/AdBanner";
+import PremiumBadge from "@/components/PremiumBadge";
 import { SAMPLE_STATIONS, type ChangingStation } from "@/data/stations";
 
 const Index = () => {
@@ -49,6 +51,16 @@ const Index = () => {
         selectedFilters={selectedFilters}
         onFiltersChange={setSelectedFilters}
       />
+
+      {/* Premium badge in header area */}
+      <div className="flex justify-end px-4 -mt-1 mb-1">
+        <PremiumBadge />
+      </div>
+
+      {/* Ad banner for free users */}
+      {(activeTab === "list" || activeTab === "favorites") && (
+        <AdBanner variant="inline" />
+      )}
 
       <div className="flex-1 relative">
         {activeTab === "map" && (
