@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Star, ThumbsUp, User } from "lucide-react";
+import { Star, ThumbsUp, User, Camera, Crown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import { usePremium } from "@/contexts/PremiumContext";
 
 interface Review {
   id: string;
@@ -49,6 +50,7 @@ const StationReviews = ({ stationId }: StationReviewsProps) => {
   const [newRating, setNewRating] = useState(0);
   const [newText, setNewText] = useState("");
   const [helpfulIds, setHelpfulIds] = useState<Set<string>>(new Set());
+  const { isPremium, setShowPaywall } = usePremium();
 
   const handleSubmit = () => {
     if (newRating === 0) {
@@ -117,6 +119,23 @@ const StationReviews = ({ stationId }: StationReviewsProps) => {
                 placeholder="Share your experience to help other moms..."
                 className="w-full bg-card border border-border rounded-xl p-3 text-sm resize-none h-24 focus:outline-none focus:ring-2 focus:ring-ring"
               />
+              {/* Photo upload - premium only */}
+              <button
+                onClick={() => {
+                  if (!isPremium) {
+                    setShowPaywall(true);
+                    return;
+                  }
+                  toast.info("Photo upload coming soon!");
+                }}
+                className={`flex items-center gap-2 text-xs font-medium px-3 py-2 rounded-xl border border-border ${
+                  isPremium ? "text-foreground" : "text-muted-foreground"
+                }`}
+              >
+                <Camera size={14} />
+                Add Photo
+                {!isPremium && <Crown size={10} className="text-primary" />}
+              </button>
               <button
                 onClick={handleSubmit}
                 className="w-full gradient-warm text-primary-foreground font-display font-semibold py-2.5 rounded-xl text-sm"
