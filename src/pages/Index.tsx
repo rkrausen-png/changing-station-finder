@@ -62,6 +62,7 @@ const Index = () => {
         {activeTab === "add" && <SubmitStationView />}
         {activeTab === "favorites" && <FavoritesView />}
         {activeTab === "advertise" && <AdvertiseView />}
+        {activeTab === "community" && null}
       </div>
 
       <StationDetail station={selectedStation} onClose={() => setSelectedStation(null)} />
