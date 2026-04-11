@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { ChangingStation } from "@/data/stations";
 import { openDirections } from "@/lib/maps";
 import { toast } from "sonner";
+import StationReviews from "./StationReviews";
 
 interface StationDetailProps {
   station: ChangingStation | null;
@@ -116,6 +117,8 @@ const StationDetail = ({ station, onClose }: StationDetailProps) => {
                 <Share2 size={18} />
               </button>
             </div>
+
+            <StationReviews stationId={station.id} />
           </div>
         </motion.div>
       )}
